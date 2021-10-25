@@ -163,7 +163,7 @@ def train_model(model,
         import actnn
         actnn.ops.filtering_tensors(runner.model.named_parameters())
         # actnn.ops.filtering_tensors(runner.model.named_buffers())
-        actnn.ops.filtering_tensors(runner.optimizer.state.items())
+        # actnn.ops.filtering_tensors(runner.optimizer.state.items())
 
         def pack_hook(x):
             quantized, x_shape = actnn.ops.quantize_activation(x, None), x.shape
