@@ -276,6 +276,8 @@ class Res2Net(ResNet):
     """
 
     arch_settings = {
+        26: (Bottle2neck, (1, 2, 4, 1)),
+        38: (Bottle2neck, (2, 3, 5, 2)),
         50: (Bottle2neck, (3, 4, 6, 3)),
         101: (Bottle2neck, (3, 4, 23, 3)),
         152: (Bottle2neck, (3, 8, 36, 3))
