@@ -8,7 +8,7 @@ runner = dict(max_epochs=120)
 
 actnn = True
 data = dict(
-    samples_per_gpu=256, # 256*1 = 256
+    samples_per_gpu=64, # 64*4 = 256
     workers_per_gpu=8,
 )
 log_config = dict(
@@ -20,7 +20,7 @@ log_config = dict(
             init_kwargs=dict(
                 project='classification',
                 entity='actnn',
-                name='repvggA0_b256x1_imagenet',
+                name='repvggA0_b64x4_imagenet',
             )
         )
     ]

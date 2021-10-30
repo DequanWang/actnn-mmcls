@@ -40,4 +40,3 @@ data = dict(
         ann_file='data/imagenet21k/meta/val.txt',
         pipeline=test_pipeline,
         recursion_subdir=True))
-evaluation = dict(interval=1, metric='accuracy')
