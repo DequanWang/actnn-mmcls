@@ -13,5 +13,5 @@ dist_params = dict(backend='nccl')
 log_level = 'INFO'
 load_from = None
 resume_from = None
-workflow = [('train', 1), ('val', 1)]
+workflow = [('train', 1)]
 evaluation = dict(interval=1, metric='accuracy')

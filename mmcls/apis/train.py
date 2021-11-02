@@ -163,21 +163,23 @@ def train_model(model,
         runner.load_checkpoint(cfg.load_from)
 
     # runner.run(data_loaders, cfg.workflow)
-    if cfg.actnn:
+    actnn_cfg = cfg.get('actnn', None)
+    if actnn_cfg:
         import actnn
-        actnn.ops.filtering_tensors(runner.model.named_parameters())
-        # actnn.ops.filtering_tensors(runner.model.named_buffers())
-        # actnn.ops.filtering_tensors(runner.optimizer.state.items())
+        controller = actnn.controller.Controller(
+            default_bit=actnn_cfg.default_bit, auto_prec=actnn_cfg.auto_prec)
+        controller.filter_tensors(runner.model.named_parameters())
+        runner.controller = controller
 
         def pack_hook(x):
-            quantized, x_shape = actnn.ops.quantize_activation(x, None), x.shape
+            r = controller.quantize(x)
             del x
-            return (quantized, x_shape)
+            return r
 
         def unpack_hook(x):
-            dequantized = actnn.ops.dequantize_activation(x[0], x[1])
+            r = controller.dequantize(x)
             del x
-            return dequantized
+            return r
 
         with torch.autograd.graph.saved_tensors_hooks(pack_hook, unpack_hook):
             runner.run(data_loaders, cfg.workflow)

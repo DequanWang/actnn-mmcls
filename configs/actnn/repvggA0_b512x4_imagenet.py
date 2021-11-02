@@ -1,7 +1,7 @@
 _base_ = [
     '../_base_/models/repvgg-A0_in1k.py',
     '../_base_/datasets/imagenet_bs64_pil_resize.py',
-    '../_base_/schedules/imagenet_bs256_coslr.py',
+    '../_base_/schedules/imagenet_bs2048_coslr.py',
     '../_base_/default_runtime.py'
 ]
 runner = dict(max_epochs=120)
@@ -9,9 +9,8 @@ runner = dict(max_epochs=120)
 actnn = True
 data = dict(
     samples_per_gpu=512, # 512*4 = 2048
-    workers_per_gpu=8,
+    workers_per_gpu=2,
 )
-optimizer = dict(lr=0.8)
 log_config = dict(
     interval=100,
     hooks=[
@@ -26,3 +25,4 @@ log_config = dict(
         )
     ]
 )
+evaluation = dict(interval=10)
