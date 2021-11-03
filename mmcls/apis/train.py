@@ -51,6 +51,7 @@ def set_random_seed(seed, deterministic=False):
 def train_model(model,
                 dataset,
                 cfg,
+                controller=None,
                 distributed=False,
                 validate=False,
                 timestamp=None,
@@ -162,26 +163,29 @@ def train_model(model,
     elif cfg.load_from:
         runner.load_checkpoint(cfg.load_from)
 
-    # runner.run(data_loaders, cfg.workflow)
-    actnn_cfg = cfg.get('actnn', None)
-    if actnn_cfg:
-        import actnn
-        controller = actnn.controller.Controller(
-            default_bit=actnn_cfg.default_bit, auto_prec=actnn_cfg.auto_prec)
-        controller.filter_tensors(runner.model.named_parameters())
+    if controller:
         runner.controller = controller
 
-        def pack_hook(x):
-            r = controller.quantize(x)
-            del x
-            return r
+    runner.run(data_loaders, cfg.workflow)
+    # actnn_cfg = cfg.get('actnn', None)
+    # if actnn_cfg:
+    #     import actnn
+    #     controller = actnn.controller.Controller(
+    #         default_bit=actnn_cfg.default_bit, auto_prec=actnn_cfg.auto_prec)
+    #     controller.filter_tensors(runner.model.named_parameters())
+    #     runner.controller = controller
 
-        def unpack_hook(x):
-            r = controller.dequantize(x)
-            del x
-            return r
+    #     def pack_hook(x):
+    #         r = controller.quantize(x)
+    #         del x
+    #         return r
 
-        with torch.autograd.graph.saved_tensors_hooks(pack_hook, unpack_hook):
-            runner.run(data_loaders, cfg.workflow)
-    else:
-        runner.run(data_loaders, cfg.workflow)
+    #     def unpack_hook(x):
+    #         r = controller.dequantize(x)
+    #         del x
+    #         return r
+
+    #     with torch.autograd.graph.saved_tensors_hooks(pack_hook, unpack_hook):
+    #         runner.run(data_loaders, cfg.workflow)
+    # else:
+    #     runner.run(data_loaders, cfg.workflow)
